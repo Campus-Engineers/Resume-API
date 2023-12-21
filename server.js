@@ -15,7 +15,12 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.get("/api", (req, res) => {
+app.use("/api", (req, res, next) => {
+  console.log("API request received");
+  next();
+});
+
+app.get("/api/intro", (req, res) => {
   // send a json response with the status code of 200 to the client
   // json() method takes a json object as an argument, converts it to a json-like string,
   // and then sends it to the client
@@ -23,6 +28,14 @@ app.get("/api", (req, res) => {
     name: "Peter Nguyen",
     university: "California State University, East Bay",
     major: "Computer Science",
+  });
+});
+
+app.get("/api/experience", (req, res) => {
+  res.status(200).json({
+    company: "Apple",
+    title: "Software Engineer",
+    duration: "2018 - Present",
   });
 });
 
