@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 // a library that constructs absolute paths regardless of OS
 const path = require("path");
+const apiRouter = require('./routes/api'); //importing the api router
 
 app.use(express.urlencoded({ extended: true }));
 // parse application/json
@@ -15,29 +16,7 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.use("/api", (req, res, next) => {
-  console.log("API request received");
-  next();
-});
-
-app.get("/api/intro", (req, res) => {
-  // send a json response with the status code of 200 to the client
-  // json() method takes a json object as an argument, converts it to a json-like string,
-  // and then sends it to the client
-  res.status(200).json({
-    name: "Peter Nguyen",
-    university: "California State University, East Bay",
-    major: "Computer Science",
-  });
-});
-
-app.get("/api/experience", (req, res) => {
-  res.status(200).json({
-    company: "Apple",
-    title: "Software Engineer",
-    duration: "2018 - Present",
-  });
-});
+app.use("/api", apiRouter);
 
 app.listen(3000, () => {
   console.log("App is listening on Port 3000");
