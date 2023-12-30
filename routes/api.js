@@ -1,7 +1,6 @@
 const express = require('express') //import express
 const router = express.Router() //instantiate the router
-
-var experiences = []
+const experienceRouter = require("./experience")
 
 router.use("/", (req, res, next) => {
     console.log("API request received");
@@ -18,16 +17,7 @@ router.get("/intro", (req, res) => {
       major: "Computer Science",
     });
 });
-  
-router.get("/experience", (req, res) => {
-    res.status(200).json(experiences);
-});
 
-router.post("/experience", (req, res) => {
-    const newExperience = req.body; //req.body holds the JSON-formmated request body
-    experiences.push(newExperience); // Add new experience to the array
-    res.status(201).json({ message: 'Experience added successfully', newExperience });
-})
-
+router.use('/experience', experienceRouter);
 
 module.exports = router
