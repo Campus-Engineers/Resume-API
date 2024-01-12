@@ -1,5 +1,6 @@
 const express = require("express"); //import express
 const router = express.Router(); //instatiate the router
+const { Experiences } = require("../database/experience"); //import the Experiences model
 
 var experiences = [];
 
@@ -13,14 +14,25 @@ router.get("/intro", (req, res) => {
   // json() method takes a json object as an argument, converts it to a json-like string,
   // and then sends it to the client
   res.status(200).json({
-    name: "Vinh Pham",
+    name: "Peter Nguyen",
     university: "California State University, East Bay",
     major: "Computer Science",
   });
 });
 
-router.get("/experience", (req, res) => {
-  res.status(200).json(experiences);
+router.get("/experiences", async (req, res) => {
+  await Experiences.find({})
+    .exec()
+    .then((experiences) =>
+      res.status(200).json({ message: experiences, ok: true })
+    )
+    .catch((err) => res.status(500).json({ message: err, ok: false }));
+});
+
+router.post("/experiences", (req, res) => {
+  const newExperience = req.body;
+  experiences.push(newExperience); //say you got a new job
+  res.status(201).json({ message: "New job was added" });
 });
 
 router.put("/:id", (req, res) => {
@@ -45,12 +57,6 @@ router.delete("/:id", (req, res) => {
   } else {
     res.status(404).json({ message: "Experience not found" });
   }
-});
-
-router.post("/experience", (req, res) => {
-  const newExperience = req.body;
-  experiences.push(newExperience); //say you got a new job
-  res.status(201).json({ message: "New job was added" });
 });
 
 module.exports = router;

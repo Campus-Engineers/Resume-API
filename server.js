@@ -2,25 +2,12 @@ const express = require("express");
 const app = express();
 // a library that constructs absolute paths regardless of OS
 const path = require("path");
+const { connectDB } = require("./database"); //importing the connectDB function
 const apiRouter = require("./routes/api"); //importing the api router
-// const mongoose = require("mongoose");
-const mongoose = require("mongoose");
-// require("dotenv").config();
 require("dotenv").config();
 
-console.log("Hi");
-
-// Connect to MongoDB
-// mongoose
-//   .connect(process.env.MONGO_URI)
-//   .then(() => console.log("MongoDB Connected"))
-//   .catch((err) => console.log(err));
-
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+// connect to mongoDB database using call(this) to access local variables in this file
+connectDB.call(this);
 
 app.use(express.urlencoded({ extended: true }));
 // parse application/json
