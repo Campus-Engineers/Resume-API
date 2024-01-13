@@ -1,6 +1,7 @@
 const express = require("express"); //import express
-const router = express.Router(); //instatiate the router
+const router = express.Router(); //instantiate the router
 const { Experiences } = require("../database/experience"); //import the Experiences model
+const { isExperienceValid } = require("../utils"); //import the isExperienceValid function
 
 var experiences = [];
 
@@ -20,19 +21,28 @@ router.get("/intro", (req, res) => {
   });
 });
 
-router.get("/experiences", async (req, res) => {
+// exclude the _id and __v fields from the query results
+// .select("-_id -__v")
+
+router.get("/experiences", async (_, res) => {
   await Experiences.find({})
-    .exec()
     .then((experiences) =>
       res.status(200).json({ message: experiences, ok: true })
     )
     .catch((err) => res.status(500).json({ message: err, ok: false }));
 });
 
-router.post("/experiences", (req, res) => {
+router.post("/experiences", async (req, res) => {
   const newExperience = req.body;
-  experiences.push(newExperience); //say you got a new job
-  res.status(201).json({ message: "New job was added" });
+  if (!isExperienceValid(newExperience)) {
+    return res.status(400).json({ message: "Invalid experience" });
+  }
+
+  return await Experiences.create(newExperience)
+    .then((_) =>
+      res.status(201).json({ message: "New job was added", ok: true })
+    )
+    .catch((err) => res.status(500).json({ message: err, ok: false }));
 });
 
 router.put("/:id", (req, res) => {
